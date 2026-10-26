@@ -34,7 +34,7 @@ static class JokerLauncher
     static void Main(string[] args)
     {
         Application.EnableVisualStyles();
-        try { MaybeUpdate(); } catch (Exception e) { Log("error: " + e.Message); }
+        try { if (MaybeUpdate()) return; } catch (Exception e) { Log("error: " + e.Message); }
         if (TestLog != null) { Log("would start the game"); return; }
         StartGame(args);
     }
@@ -52,9 +52,12 @@ static class JokerLauncher
         Process.Start(new ProcessStartInfo(exe, string.Join(" ", quoted.ToArray())) { WorkingDirectory = Dir, UseShellExecute = false });
     }
 
-    static void MaybeUpdate()
+    /// True when an update's setup is now running; it replaces this launcher's own file, so the launcher has to be
+    /// gone by then, and the setup starts the game when it finishes.
+    static bool MaybeUpdate()
     {
-        foreach (var p in Process.GetProcessesByName("Joker")) { p.Dispose(); return; } // already playing: never swap files under it
+        foreach (var p in Process.GetProcessesByName("Joker")) { p.Dispose(); return false; } // already playing: never swap files under it
+        foreach (var old in Directory.GetFiles(Path.GetTempPath(), "JokerSetup-*.exe")) { try { File.Delete(old); } catch { } }
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
         var request = (HttpWebRequest)WebRequest.Create(Api);
@@ -71,29 +74,30 @@ static class JokerLauncher
         foreach (Dictionary<string, object> asset in (IEnumerable)release["assets"])
             if ((string)asset["name"] == SetupName) { url = (string)asset["browser_download_url"]; size = Convert.ToInt64(asset["size"]); }
         Log("latest " + tag + (url == null ? " (no setup attached)" : " " + size + " bytes"));
-        if (url == null) return;
+        if (url == null) return false;
 
         var versionFile = Path.Combine(Dir, "version.txt");
         var have = File.Exists(versionFile) ? File.ReadAllText(versionFile).Trim() : "";
         Log("installed " + have);
-        if (have == tag) return;
+        if (have == tag) return false;
 
         var answer = TestLog != null ? DialogResult.Yes : MessageBox.Show(
             "A new version of Joker is ready (" + (size / (1024 * 1024)) + " MB).\n\nUpdate now?",
             "Joker update", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-        if (answer != DialogResult.Yes) return;
+        if (answer != DialogResult.Yes) return false;
 
         var setup = Path.Combine(Path.GetTempPath(), "JokerSetup-" + tag + ".exe");
         if (TestLog != null)
         {
             using (var client = new WebClient()) { client.Headers.Add("User-Agent", "joker-launcher"); client.DownloadFile(url, setup); }
-            if (new FileInfo(setup).Length != size) { Log("download incomplete"); return; }
+            if (new FileInfo(setup).Length != size) { Log("download incomplete"); return false; }
         }
-        else if (!Download(url, setup, size)) return;
-        Log("downloaded; installing");
-        var quiet = TestLog != null ? "/VERYSILENT" : "/SILENT";
-        using (var run = Process.Start(setup, quiet + " /SUPPRESSMSGBOXES /NORESTART /DIR=\"" + Dir + "\"")) { run.WaitForExit(); Log("setup exit " + run.ExitCode); }
-        try { File.Delete(setup); } catch { }
+        else if (!Download(url, setup, size)) return false;
+        Log("downloaded; handing over to setup");
+        // The test asks for no window and no game; a real update shows setup's progress and starts the game after.
+        var flags = TestLog != null ? "/VERYSILENT" : "/SILENT /LAUNCH=1";
+        Process.Start(setup, flags + " /SUPPRESSMSGBOXES /NORESTART /DIR=\"" + Dir + "\"").Dispose();
+        return true;
     }
 
     /// The download with a small progress window; false if it was cancelled or failed.

@@ -42,7 +42,7 @@ OutputDir=..\out
 OutputBaseFilename=JokerSetup
 Compression=lzma2/fast
 SolidCompression=no
-CloseApplications=yes
+CloseApplications=force
 RestartApplications=no
 
 [Messages]
@@ -68,11 +68,18 @@ Name: "{userdesktop}\Joker"; Filename: "{app}\JokerLauncher.exe"; WorkingDir: "{
 
 [Run]
 Filename: "{app}\Joker.exe"; WorkingDir: "{app}"; Description: "Play Joker now"; Flags: nowait postinstall skipifsilent
+; An update from the launcher (/SILENT /LAUNCH=1): the launcher has exited so its file could be replaced; start the game.
+Filename: "{app}\Joker.exe"; WorkingDir: "{app}"; Flags: nowait; Check: LaunchRequested
 
 [UninstallDelete]
 Type: files; Name: "{app}\version.txt"
 
 [Code]
+function LaunchRequested: Boolean;
+begin
+  Result := ExpandConstant('{param:LAUNCH|0}') = '1';
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   { The launcher compares this with the newest release to know when to offer an update. }
