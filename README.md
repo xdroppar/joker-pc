@@ -1,15 +1,11 @@
-# Joker Poker Club — Windows
+# Joker for Windows
 
-Open **PowerShell** (Start menu → type `powershell` → Enter), paste this line, and press Enter:
+**Download: https://xdroppar.github.io/joker-pc/**
 
-```
-irm https://github.com/xdroppar/joker-pc/releases/latest/download/install.ps1 | iex
-```
+This repo builds and publishes the Windows installer.
 
-It downloads the game (about 1.8 GB), puts a **Joker** shortcut on your desktop, and starts it. Use that shortcut
-from then on: it fetches new versions by itself before the game opens.
-
-To play a friend: **PLAY → PLAY A FRIEND**. One of you creates a table and reads out the 4-letter code; the other
-joins with it.
-
-Uninstall: delete `%LOCALAPPDATA%\Programs\Joker` and the Joker shortcuts.
+- `installer/joker.iss` is the setup wizard (Inno Setup 6). It installs per user, needs no admin rights, and adds Start Menu and desktop shortcuts plus an uninstall entry.
+- `launcher/JokerLauncher.cs` is what the shortcuts open. It checks for a newer release, offers to update, then starts the game.
+- `art/make-art.py` makes the icon and the wizard images from the game's icon and an in-game frame.
+- `docs/` is the download page, served by GitHub Pages.
+- `publish.ps1 <build folder>` builds the launcher and setup and publishes them as the latest release.

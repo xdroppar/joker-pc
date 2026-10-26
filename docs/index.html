@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joker — poker with your friends</title>
+<meta name="description" content="Joker is a free poker game for Windows. Sit at a real table, deal in your friends with a code, and play.">
+<meta property="og:title" content="Joker — poker with your friends">
+<meta property="og:description" content="A free poker game for Windows. Real tables, real players, a dealer who deals every card.">
+<meta property="og:image" content="https://xdroppar.github.io/joker-pc/img/table.jpg">
+<link rel="icon" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --onyx: #121110;
+    --onyx-2: #1b1a18;
+    --line: #2c2a26;
+    --cream: #e5d6ac;
+    --text: #efe9dc;
+    --muted: #a59d8a;
+    --red: #8a1c1c;
+    --red-hi: #a52323;
+    --felt: #12301f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--onyx);
+    color: var(--text);
+    font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  a { color: var(--cream); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  header { padding: 22px 0; }
+  header .wrap { display: flex; align-items: center; gap: 12px; }
+  header img { width: 36px; height: 36px; }
+  header .name { font: 700 22px/1 "Playfair Display", Georgia, serif; letter-spacing: .02em; color: var(--cream); }
+
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .hero .bg {
+    position: absolute; inset: 0;
+    background: url(img/table.jpg) center 40% / cover no-repeat;
+    opacity: .55;
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--onyx) 0%, rgba(18,17,16,.85) 38%, rgba(18,17,16,.15) 75%),
+                linear-gradient(0deg, var(--onyx) 0%, rgba(18,17,16,0) 35%);
+  }
+  .hero .wrap { position: relative; z-index: 1; padding-top: 72px; padding-bottom: 96px; }
+  h1 {
+    font: 700 clamp(40px, 6.4vw, 72px)/1.05 "Playfair Display", Georgia, serif;
+    margin: 0 0 18px; max-width: 12ch; color: #fff8e8;
+  }
+  .lede { font-size: 19px; color: #d8d0bd; max-width: 34ch; margin: 0 0 32px; }
+
+  .download {
+    display: inline-flex; align-items: center; gap: 14px;
+    background: var(--red); color: #fff8e8; text-decoration: none;
+    padding: 16px 28px 16px 22px; border-radius: 12px;
+    font-weight: 600; font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255,255,255,.12);
+    transition: background .15s ease, transform .15s ease;
+  }
+  .download:hover { background: var(--red-hi); transform: translateY(-1px); }
+  .download:focus-visible { outline: 3px solid var(--cream); outline-offset: 3px; }
+  .download svg { width: 26px; height: 26px; flex: none; }
+  .download small { display: block; font-weight: 400; font-size: 13px; opacity: .8; }
+  .meta { margin-top: 14px; color: var(--muted); font-size: 14px; }
+
+  section { padding: 80px 0; border-bottom: 1px solid var(--line); }
+  h2 { font: 600 32px/1.2 "Playfair Display", Georgia, serif; margin: 0 0 12px; color: #fff8e8; }
+  .sub { color: var(--muted); margin: 0 0 40px; max-width: 60ch; }
+
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feature { background: var(--onyx-2); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .feature img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .feature div { padding: 20px 22px 24px; }
+  .feature h3 { margin: 0 0 6px; font-size: 18px; color: var(--cream); }
+  .feature p { margin: 0; color: #cfc7b4; font-size: 15px; }
+
+  .steps { counter-reset: s; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; list-style: none; padding: 0; margin: 0; }
+  .steps li { background: var(--onyx-2); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .steps li::before {
+    counter-increment: s; content: counter(s);
+    display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--cream); color: var(--onyx); font-weight: 700; margin-bottom: 12px;
+  }
+  .steps strong { display: block; color: #fff8e8; margin-bottom: 4px; }
+  .steps span { color: #cfc7b4; font-size: 15px; }
+
+  details { background: var(--onyx-2); border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px; margin-bottom: 12px; }
+  summary { cursor: pointer; font-weight: 600; color: #fff8e8; }
+  details p { color: #cfc7b4; margin: 12px 0 0; }
+  kbd { background: #2a2824; border: 1px solid #3a3731; border-radius: 6px; padding: 1px 7px; font: 500 14px Inter, sans-serif; color: var(--cream); }
+
+  .cta { text-align: center; }
+  .cta .sub { margin-left: auto; margin-right: auto; }
+
+  footer { padding: 32px 0 48px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 860px) {
+    .features, .steps { grid-template-columns: 1fr; }
+    .hero .wrap { padding-top: 40px; padding-bottom: 64px; }
+    .hero::after { background: linear-gradient(0deg, var(--onyx) 10%, rgba(18,17,16,.75) 100%); }
+    section { padding: 56px 0; }
+  }
+  @media (max-width: 480px) {
+    .wrap { padding: 0 16px; }
+    .download { width: 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .download { transition: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <img src="img/chip.png" alt="">
+    <span class="name">Joker</span>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="bg" role="img" aria-label="A hand in progress at a Joker table"></div>
+    <div class="wrap">
+      <h1>Pull up a chair.</h1>
+      <p class="lede">Real poker at a real table. Deal in your friends with a code and play. It's free.</p>
+      <a class="download" href="https://github.com/xdroppar/joker-pc/releases/latest/download/JokerSetup.exe">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5.1 10.4 4v7.2H3V5.1Zm0 13.8 7.4 1.1v-7.1H3v6Zm8.3 1.2L21 21.5v-8.6h-9.7v7.2ZM11.3 3.9v7.3H21V2.5l-9.7 1.4Z"/></svg>
+        <span>Download for Windows<small>Free · Windows 10 and 11</small></span>
+      </a>
+      <p class="meta">About 750 MB. Updates install themselves.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2>A card room, not a menu</h2>
+      <p class="sub">Every hand is dealt by a dealer at a full-size table, with chips you can see stacked in front of every player.</p>
+      <div class="features">
+        <div class="feature">
+          <img src="img/table.jpg" alt="The board and bets at a live hand" loading="lazy">
+          <div><h3>Play your friends</h3><p>Open <em>Play a Friend</em>, share the four-letter code, and you're heads-up at a private table.</p></div>
+        </div>
+        <div class="feature">
+          <img src="img/players.jpg" alt="Six players seated around the table" loading="lazy">
+          <div><h3>Live tables</h3><p>Sit down with real players at six-seat tables. Win pots, complete missions, and level up.</p></div>
+        </div>
+        <div class="feature">
+          <img src="img/lobby.jpg" alt="The lobby with the harbour behind it" loading="lazy">
+          <div><h3>Make it yours</h3><p>Pick your table, chair, card backs and chip set, all earned by playing.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Get playing in three steps</h2>
+      <p class="sub">No account setup outside the game, and no admin password needed.</p>
+      <ol class="steps">
+        <li><strong>Download</strong><span>Click <em>Download for Windows</em> above.</span></li>
+        <li><strong>Install</strong><span>Open <em>JokerSetup.exe</em> and click through. It takes about a minute.</span></li>
+        <li><strong>Play</strong><span>Sign up in the game, then open <em>Play</em> → <em>Play a Friend</em>.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Questions</h2>
+      <details>
+        <summary>Windows says "Windows protected your PC"</summary>
+        <p>Windows shows this for new programs it hasn't seen many people download yet. Click <kbd>More info</kbd>, then <kbd>Run anyway</kbd>. You only need to do it once.</p>
+      </details>
+      <details>
+        <summary>Is it real money?</summary>
+        <p>No. Joker uses play chips only. You can't win or lose real money.</p>
+      </details>
+      <details>
+        <summary>How do updates work?</summary>
+        <p>When you open Joker and a new version is out, it asks to update, downloads it and installs it for you before the game starts.</p>
+      </details>
+      <details>
+        <summary>How do I uninstall it?</summary>
+        <p>Settings → Apps → Installed apps → Joker → Uninstall.</p>
+      </details>
+      <details>
+        <summary>What do I need?</summary>
+        <p>Windows 10 or 11 (64-bit), about 2 GB of free space, an internet connection, and a graphics card from the last several years.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <h2>Your seat's open.</h2>
+      <p class="sub">Free for Windows 10 and 11.</p>
+      <a class="download" href="https://github.com/xdroppar/joker-pc/releases/latest/download/JokerSetup.exe">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 5.1 10.4 4v7.2H3V5.1Zm0 13.8 7.4 1.1v-7.1H3v6Zm8.3 1.2L21 21.5v-8.6h-9.7v7.2ZM11.3 3.9v7.3H21V2.5l-9.7 1.4Z"/></svg>
+        <span>Download for Windows<small>JokerSetup.exe</small></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Joker · play chips only, no real-money gambling · 17+</span>
+    <span><a href="https://poker-penu.onrender.com/privacy">Privacy</a> &nbsp;·&nbsp; <a href="https://poker-penu.onrender.com/support">Support</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
